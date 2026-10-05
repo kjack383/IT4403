@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Library Book</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="book.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <p class="eyebrow">Milestone 1</p>
+      <h1>Open Library Book</h1>
+      <p class="subtitle">Single-book JSON display</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <p><a class="back-link" href="index.html">&larr; Back to Project Home</a></p>
+    <div id="book-status" class="status">Loading book information...</div>
+    <section id="book-output" class="book-card card" aria-live="polite"></section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 Kimora Jackson | Kennesaw State University</p>
+    </div>
+  </footer>
+</body>
+</html>
