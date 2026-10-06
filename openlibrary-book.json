@@ -1,0 +1,25 @@
+{
+  "identifiers": {
+    "goodreads": ["1507552"],
+    "librarything": ["6446"]
+  },
+  "title": "Fantastic Mr. Fox",
+  "authors": [
+    {"key": "/authors/OL34184A"}
+  ],
+  "publish_date": "October 1, 1988",
+  "publishers": ["Puffin"],
+  "covers": [15152634, 8739161, -1],
+  "contributions": ["Tony Ross (Illustrator)"],
+  "languages": [{"key": "/languages/eng"}],
+  "type": {"key": "/type/edition"},
+  "first_sentence": {
+    "type": "/type/text",
+    "value": "Down in the valley there were three farms."
+  },
+  "key": "/books/OL7353617M",
+  "number_of_pages": 96,
+  "works": [{"key": "/works/OL45804W"}],
+  "isbn_10": ["0140328726"],
+  "isbn_13": ["9780140328721"]
+}
