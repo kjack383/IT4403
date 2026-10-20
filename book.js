@@ -117,13 +117,18 @@ $(document).ready(function () {
     return "Not Available";
   }
 
-  function getCover(book) {
-    if (book.cover && typeof book.cover === "string") return book.cover;
-    if (book.cover && book.cover.medium) return book.cover.medium;
-    if (book.cover && book.cover.large) return book.cover.large;
-    if (book.cover_i) return `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`;
-    return "";
+function getCover(book) {
+  if (Array.isArray(book.covers)) {
+    const coverId = book.covers.find(id => id > 0);
+
+    if (coverId) {
+      return `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`;
+    }
   }
+
+  return "";
+}
+
 
   function getRecordLink(book) {
     if (book.url) return book.url;
