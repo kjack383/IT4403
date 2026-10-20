@@ -21,20 +21,20 @@
 
     .container {
       width: min(100% - 32px, 1000px);
-      margin: 0 auto;
+      margin: auto;
     }
 
     .site-header {
-      padding: 32px 0;
+      padding: 30px 0;
       color: white;
       background: #183153;
     }
 
     .eyebrow {
       margin: 0;
-      text-transform: uppercase;
+      font-size: 14px;
       letter-spacing: 2px;
-      font-size: 0.85rem;
+      text-transform: uppercase;
     }
 
     h1 {
@@ -47,11 +47,11 @@
     }
 
     main {
-      padding-top: 24px;
-      padding-bottom: 40px;
+      padding: 24px 0 40px;
     }
 
-    .back-link {
+    .back-link,
+    .book-link {
       color: #245a96;
     }
 
@@ -97,7 +97,6 @@
     .book-link {
       display: inline-block;
       margin-top: 12px;
-      color: #245a96;
     }
 
     footer {
@@ -116,6 +115,7 @@
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
+
 <body>
   <header class="site-header">
     <div class="container">
@@ -126,10 +126,16 @@
   </header>
 
   <main class="container">
-    <p><a class="back-link" href="index.html">&larr; Back to Project Home</a></p>
+    <p>
+      <a class="back-link" href="index.html">
+        &larr; Back to Project Home
+      </a>
+    </p>
+
     <div id="book-status" class="status" role="status">
       Loading book information...
     </div>
+
     <section id="book-output" class="card" aria-live="polite"></section>
   </main>
 
@@ -147,6 +153,7 @@
       $.getJSON("openlibrary-book.json")
         .done(function (book) {
           const title = book.title || "Title unavailable";
+
           const description =
             typeof book.description === "string"
               ? book.description
@@ -154,6 +161,7 @@
                 ? book.description.value
                 : "No description is available.";
 
+          // Use the covers array from the original JSON.
           const coverId = Array.isArray(book.covers)
             ? book.covers.find(function (id) {
                 return Number.isInteger(id) && id > 0;
@@ -161,16 +169,21 @@
             : null;
 
           const coverUrl = coverId
-            ? "https://covers.openlibrary.org/b/id/" + coverId + "-L.jpg"
+            ? "https://covers.openlibrary.org/b/id/" +
+              coverId + "-L.jpg"
             : "";
 
           const subjects = Array.isArray(book.subjects)
             ? book.subjects.slice(0, 10)
             : [];
 
-          const openLibraryUrl = book.key
-            ? "https://openlibrary.org" + book.key
-            : "";
+          const workId = book.key || "Unavailable";
+
+          const openLibraryUrl =
+            typeof book.key === "string" &&
+            book.key.startsWith("/works/")
+              ? "https://openlibrary.org" + book.key
+              : "";
 
           let html = '<div class="book-layout">';
 
@@ -184,14 +197,14 @@
                   onerror="this.style.display='none';">
               </div>`;
           } else {
-            html += "<p>Cover image unavailable.</p>";
+            html += "<p>Book cover unavailable.</p>";
           }
 
           html += `
             <div class="book-details">
               <h2>${escapeHtml(title)}</h2>
               <p><strong>Work ID:</strong>
-                ${escapeHtml(book.key || "Unavailable")}
+                ${escapeHtml(workId)}
               </p>
               <p><strong>Description:</strong>
                 ${escapeHtml(description)}
@@ -200,9 +213,11 @@
 
           if (subjects.length > 0) {
             html += '<ul class="subjects">';
+
             subjects.forEach(function (subject) {
               html += "<li>" + escapeHtml(subject) + "</li>";
             });
+
             html += "</ul>";
           } else {
             html += "<p>No subjects are available.</p>";
@@ -225,7 +240,8 @@
         })
         .fail(function () {
           $status.text(
-            "Unable to load book information. Check that openlibrary-book.json is in the same folder."
+            "Unable to load book information. Make sure " +
+            "openlibrary-book.json is in the same folder."
           );
         });
 
