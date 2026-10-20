@@ -1,12 +1,120 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Open Library Book</title>
-  <link rel="stylesheet" href="style.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #243047;
+      background: #f4f6f9;
+    }
+
+    .container {
+      width: min(100% - 32px, 1000px);
+      margin: 0 auto;
+    }
+
+    .site-header {
+      padding: 32px 0;
+      color: white;
+      background: #183153;
+    }
+
+    .eyebrow {
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.85rem;
+    }
+
+    h1 {
+      margin: 8px 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: #dce6f2;
+    }
+
+    main {
+      padding-top: 24px;
+      padding-bottom: 40px;
+    }
+
+    .back-link {
+      color: #245a96;
+    }
+
+    .status {
+      margin: 20px 0;
+    }
+
+    .card {
+      padding: 24px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    .book-layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .book-cover {
+      display: block;
+      width: 220px;
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    .book-details {
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .book-details h2 {
+      margin-top: 0;
+    }
+
+    .subjects {
+      padding-left: 20px;
+    }
+
+    .book-link {
+      display: inline-block;
+      margin-top: 12px;
+      color: #245a96;
+    }
+
+    footer {
+      padding: 18px 0;
+      color: #526176;
+      text-align: center;
+      border-top: 1px solid #dce2ea;
+    }
+
+    @media (max-width: 600px) {
+      .book-layout {
+        flex-direction: column;
+      }
+    }
+  </style>
+
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="book.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -19,8 +127,10 @@
 
   <main class="container">
     <p><a class="back-link" href="index.html">&larr; Back to Project Home</a></p>
-    <div id="book-status" class="status">Loading book information...</div>
-    <section id="book-output" class="book-card card" aria-live="polite"></section>
+    <div id="book-status" class="status" role="status">
+      Loading book information...
+    </div>
+    <section id="book-output" class="card" aria-live="polite"></section>
   </main>
 
   <footer>
@@ -28,5 +138,106 @@
       <p>&copy; 2026 Kimora Jackson | Kennesaw State University</p>
     </div>
   </footer>
+
+  <script>
+    $(document).ready(function () {
+      const $status = $("#book-status");
+      const $output = $("#book-output");
+
+      $.getJSON("openlibrary-book.json")
+        .done(function (book) {
+          const title = book.title || "Title unavailable";
+          const description =
+            typeof book.description === "string"
+              ? book.description
+              : book.description && book.description.value
+                ? book.description.value
+                : "No description is available.";
+
+          const coverId = Array.isArray(book.covers)
+            ? book.covers.find(function (id) {
+                return Number.isInteger(id) && id > 0;
+              })
+            : null;
+
+          const coverUrl = coverId
+            ? "https://covers.openlibrary.org/b/id/" + coverId + "-L.jpg"
+            : "";
+
+          const subjects = Array.isArray(book.subjects)
+            ? book.subjects.slice(0, 10)
+            : [];
+
+          const openLibraryUrl = book.key
+            ? "https://openlibrary.org" + book.key
+            : "";
+
+          let html = '<div class="book-layout">';
+
+          if (coverUrl) {
+            html += `
+              <div>
+                <img
+                  class="book-cover"
+                  src="${escapeHtml(coverUrl)}"
+                  alt="Cover of ${escapeHtml(title)}"
+                  onerror="this.style.display='none';">
+              </div>`;
+          } else {
+            html += "<p>Cover image unavailable.</p>";
+          }
+
+          html += `
+            <div class="book-details">
+              <h2>${escapeHtml(title)}</h2>
+              <p><strong>Work ID:</strong>
+                ${escapeHtml(book.key || "Unavailable")}
+              </p>
+              <p><strong>Description:</strong>
+                ${escapeHtml(description)}
+              </p>
+              <h3>Subjects</h3>`;
+
+          if (subjects.length > 0) {
+            html += '<ul class="subjects">';
+            subjects.forEach(function (subject) {
+              html += "<li>" + escapeHtml(subject) + "</li>";
+            });
+            html += "</ul>";
+          } else {
+            html += "<p>No subjects are available.</p>";
+          }
+
+          if (openLibraryUrl) {
+            html += `
+              <a class="book-link"
+                 href="${escapeHtml(openLibraryUrl)}"
+                 target="_blank"
+                 rel="noopener">
+                View on Open Library
+              </a>`;
+          }
+
+          html += "</div></div>";
+
+          $output.html(html);
+          $status.text("Book information loaded successfully.");
+        })
+        .fail(function () {
+          $status.text(
+            "Unable to load book information. Check that openlibrary-book.json is in the same folder."
+          );
+        });
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+    });
+  </script>
 </body>
 </html>
