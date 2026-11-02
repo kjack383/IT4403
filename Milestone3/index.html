@@ -1,1 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Search and discover books using Open Library.">
+    <title>BookFinder | Milestone 3</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- jQuery is used for the required AJAX requests. -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="#" aria-label="BookFinder home">BookFinder<span>.</span></a>
+            <span class="header-label">OPEN LIBRARY DISCOVERY</span>
+        </div>
+    </header>
 
+    <main class="page-container">
+        <section class="hero">
+            <p class="eyebrow">YOUR NEXT READ STARTS HERE</p>
+            <h1>Find a book worth getting lost in.</h1>
+            <p class="hero-copy">Search books by title or keyword, explore the details, and discover a curated collection.</p>
+
+            <form id="search-form" class="search-form">
+                <label class="sr-only" for="search-input">Search books by title or keyword</label>
+                <input id="search-input" type="search" placeholder="Try a title, author, or keyword..." autocomplete="off">
+                <button id="search-button" type="submit">Search books</button>
+            </form>
+            <p id="search-message" class="status-message" role="status" aria-live="polite"></p>
+        </section>
+
+        <section id="results-section" class="content-section" aria-labelledby="results-heading">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">EXPLORE</p>
+                    <h2 id="results-heading">Search results</h2>
+                </div>
+                <span id="results-count" class="muted-text"></span>
+            </div>
+            <div id="results-grid" class="book-grid">
+                <p class="empty-state">Search for a book to see results here.</p>
+            </div>
+            <nav id="pagination" class="pagination" aria-label="Search result pages" hidden>
+                <button id="previous-page" class="secondary-button" type="button">Previous</button>
+                <span id="page-indicator" aria-live="polite">Page 1 of 1</span>
+                <button id="next-page" class="secondary-button" type="button">Next</button>
+            </nav>
+        </section>
+
+        <section id="details-section" class="content-section details-section" aria-labelledby="details-heading">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">BOOK INFORMATION</p>
+                    <h2 id="details-heading">Selected book</h2>
+                </div>
+            </div>
+            <div id="details-content" class="details-placeholder">
+                Select a book from the search results or collection to see its details.
+            </div>
+        </section>
+
+        <section id="collection-section" class="content-section" aria-labelledby="collection-heading">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">HANDPICKED DISCOVERY</p>
+                    <h2 id="collection-heading">Science Fiction Collection</h2>
+                    <p class="section-description">Explore books from the Science Fiction subject on Open Library.</p>
+                </div>
+            </div>
+            <div id="collection-message" class="status-message" role="status" aria-live="polite">Loading collection...</div>
+            <div id="collection-grid" class="book-grid">
+                <p class="empty-state">Loading books...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>BookFinder · Powered by the Open Library API</p>
+        <p><a href="https://openlibrary.org/" target="_blank" rel="noopener noreferrer">Visit Open Library</a></p>
+    </footer>
+</body>
+</html>
