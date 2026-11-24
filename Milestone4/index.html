@@ -1,0 +1,227 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookVerse | Discover Your Next Book</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="brand">
+        <span class="brand-icon">B</span>
+        <span>BookVerse</span>
+    </div>
+    <p>Discover. Explore. Read.</p>
+</header>
+
+<nav class="navigation">
+    <button class="nav-btn active" data-section="search-section">
+        Search Books
+    </button>
+    <button class="nav-btn" data-section="collection-section">
+        Science Fiction Collection
+    </button>
+</nav>
+
+<main class="container">
+
+    <section class="hero">
+        <p class="eyebrow">YOUR NEXT GREAT READ STARTS HERE</p>
+        <h1>Find your next favorite book.</h1>
+        <p>Explore thousands of books using the Open Library collection.</p>
+
+        <form id="search-form" class="search-form">
+            <input
+                type="search"
+                id="search-input"
+                placeholder="Search by title, author, or subject..."
+                required
+            >
+            <button type="submit">Search</button>
+        </form>
+    </section>
+
+    <section id="search-section" class="content-section">
+
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">EXPLORE THE LIBRARY</p>
+                <h2>Search Results</h2>
+                <p id="result-count">Search for a book to get started.</p>
+            </div>
+
+            <div class="view-controls">
+                <button class="view-btn active" data-view="grid">
+                    ▦ Grid View
+                </button>
+                <button class="view-btn" data-view="list">
+                    ☰ List View
+                </button>
+            </div>
+        </div>
+
+        <div id="search-status" class="status" aria-live="polite">
+            Enter a title, author, or subject above to discover books.
+        </div>
+
+        <div id="search-results" class="book-grid"></div>
+
+        <div id="pagination" class="pagination"></div>
+
+    </section>
+
+    <section id="collection-section" class="content-section hidden">
+
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">CURATED COLLECTION</p>
+                <h2>Science Fiction Books</h2>
+                <p>Explore stories beyond imagination.</p>
+            </div>
+
+            <div class="view-controls">
+                <button class="view-btn active" data-view="grid">
+                    ▦ Grid View
+                </button>
+                <button class="view-btn" data-view="list">
+                    ☰ List View
+                </button>
+            </div>
+        </div>
+
+        <div id="collection-status" class="status" aria-live="polite">
+            Loading collection...
+        </div>
+
+        <div id="collection-results" class="book-grid"></div>
+
+    </section>
+
+    <section id="details-section" class="details-section hidden">
+        <div class="details-heading">
+            <div>
+                <p class="eyebrow">BOOK INFORMATION</p>
+                <h2>Book Details</h2>
+            </div>
+            <button id="close-details" class="close-btn" aria-label="Close details">
+                ✕
+            </button>
+        </div>
+
+        <div id="book-details"></div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <p>BookVerse | IT4403 Individual Project Milestone 4</p>
+    <p>Book information provided by Open Library.</p>
+    <a href="https://openlibrary.org/" target="_blank" rel="noopener noreferrer">
+        Visit Open Library
+    </a>
+</footer>
+
+<!-- Mustache Template: Search Results and Collection -->
+<script id="book-template" type="x-tmpl-mustache">
+    <article class="book-card">
+        <div class="cover-container">
+            {{#coverUrl}}
+                <img src="{{coverUrl}}" alt="Cover of {{title}}" loading="lazy">
+            {{/coverUrl}}
+
+            {{^coverUrl}}
+                <div class="no-cover">No Cover Available</div>
+            {{/coverUrl}}
+        </div>
+
+        <div class="book-info">
+            <h3>{{title}}</h3>
+            <p class="author">{{author}}</p>
+
+            {{#year}}
+                <p class="book-meta">First published: {{year}}</p>
+            {{/year}}
+
+            {{#editionCount}}
+                <p class="book-meta">{{editionCount}} editions</p>
+            {{/editionCount}}
+
+            <button class="details-btn" data-work-key="{{workId}}">
+                View Details
+            </button>
+        </div>
+    </article>
+</script>
+
+<!-- Mustache Template: Book Details -->
+<script id="details-template" type="x-tmpl-mustache">
+    <div class="details-content">
+
+        <div class="details-cover">
+            {{#coverUrl}}
+                <img src="{{coverUrl}}" alt="Cover of {{title}}">
+            {{/coverUrl}}
+
+            {{^coverUrl}}
+                <div class="no-cover">No Cover Available</div>
+            {{/coverUrl}}
+        </div>
+
+        <div class="details-info">
+            <h2>{{title}}</h2>
+
+            <p><strong>Open Library Work ID:</strong> {{workId}}</p>
+
+            <p><strong>Author(s):</strong> {{authors}}</p>
+
+            <div class="description">
+                <h3>Description</h3>
+                <p>{{description}}</p>
+            </div>
+
+            <div class="subjects">
+                <h3>Subjects</h3>
+                {{#subjects.length}}
+                    <ul>
+                        {{#subjects}}
+                            <li>{{.}}</li>
+                        {{/subjects}}
+                    </ul>
+                {{/subjects.length}}
+                {{^subjects.length}}
+                    <p>No subjects available.</p>
+                {{/subjects.length}}
+            </div>
+
+            <div class="additional-info">
+                <h3>Additional Information</h3>
+                {{#publishDate}}
+                    <p><strong>First published:</strong> {{publishDate}}</p>
+                {{/publishDate}}
+                {{#languages.length}}
+                    <p><strong>Languages:</strong> {{languages}}</p>
+                {{/languages.length}}
+                {{#revision}}
+                    <p><strong>Revision:</strong> {{revision}}</p>
+                {{/revision}}
+            </div>
+
+            <a class="open-library-link"
+               href="{{openLibraryUrl}}"
+               target="_blank"
+               rel="noopener noreferrer">
+                View Original Open Library Record ↗
+            </a>
+        </div>
+    </div>
+</script>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.2.0/mustache.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
